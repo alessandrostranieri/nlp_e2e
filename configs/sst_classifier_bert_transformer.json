@@ -26,14 +26,18 @@ local hidden_dim = 128;
     },
 
     "encoder": {
-      "type": "lstm",
-      "input_size": embedding_dim,
-      "hidden_size": hidden_dim
+      "type": "transformer_encoder",
+      "input_dim": embedding_dim,
+      "hidden_dim": hidden_dim,
+      "projection_dim" : 128,
+      "feedforward_hidden_dim" : 128,
+      "num_layers" : 1,
+      "num_attention_heads" : 8
     }
   },
   "iterator": {
     "type": "bucket",
-    "batch_size": 64,
+    "batch_size": 16,
     "sorting_keys": [["tokens", "num_tokens"]]
   },
   "trainer": {

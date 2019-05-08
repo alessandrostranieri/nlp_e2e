@@ -34,9 +34,9 @@ class LstmClassifier(Model):
         # We need the embeddings to convert word IDs to their vector representations
         self.word_embeddings = word_embeddings
 
-        # HW
-        self.linear0 = torch.nn.Linear(in_features=word_embeddings.get_output_dim(),
-                                       out_features=encoder.get_input_dim())
+        # bottle-neck
+        self.linear_bn = torch.nn.Linear(in_features=word_embeddings.get_output_dim(),
+                                         out_features=encoder.get_input_dim())
 
         self.encoder = encoder
 
@@ -68,7 +68,7 @@ class LstmClassifier(Model):
         embeddings = self.word_embeddings(tokens)
 
         # HW
-        reduced = self.linear0(embeddings)
+        reduced = self.linear_bn(embeddings)
 
         encoder_out = self.encoder(reduced, mask)
         logits = self.linear(encoder_out)
