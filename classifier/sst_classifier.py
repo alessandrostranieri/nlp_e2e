@@ -17,8 +17,9 @@ from allennlp.training.metrics import CategoricalAccuracy, F1Measure
 from allennlp.training.trainer import Trainer
 
 from classifier.predictors import SentenceClassifierPredictor
+from classifier.transformer_encoder import TransformerSeq2VecEncoder
 
-EMBEDDING_DIM = 128
+EMBEDDING_DIM = 256
 HIDDEN_DIM = 128
 
 # Model in AllenNLP represents a model that is trained.
@@ -33,6 +34,7 @@ class LstmClassifier(Model):
         # We need the embeddings to convert word IDs to their vector representations
         self.word_embeddings = word_embeddings
 
+        # HW
         self.linear0 = torch.nn.Linear(in_features=word_embeddings.get_output_dim(),
                                        out_features=encoder.get_input_dim())
 
@@ -65,6 +67,7 @@ class LstmClassifier(Model):
         # Forward pass
         embeddings = self.word_embeddings(tokens)
 
+        # HW
         reduced = self.linear0(embeddings)
 
         encoder_out = self.encoder(reduced, mask)
@@ -126,8 +129,16 @@ def main():
     # vector. Oftentimes this is an RNN-based architecture (e.g., LSTM or GRU), but
     # AllenNLP also supports CNNs and other simple architectures (for example,
     # just averaging over the input vectors).
-    encoder = PytorchSeq2VecWrapper(
-        torch.nn.LSTM(EMBEDDING_DIM, HIDDEN_DIM, batch_first=True))
+    # encoder = PytorchSeq2VecWrapper(
+    #     torch.nn.LSTM(EMBEDDING_DIM, HIDDEN_DIM, batch_first=True))
+
+    # HW
+    encoder = TransformerSeq2VecEncoder(EMBEDDING_DIM,
+                                        HIDDEN_DIM,
+                                        projection_dim=128,
+                                        feedforward_hidden_dim=128,
+                                        num_layers=1,
+                                        num_attention_heads=2)
 
     model = LstmClassifier(word_embeddings, encoder, vocab)
     model.cuda()
@@ -145,8 +156,7 @@ def main():
                       validation_dataset=dev_dataset,
                       cuda_device=0,
                       patience=10,
-                      num_epochs=1,
-                      serialization_dir='./bert-improved-model')
+                      num_epochs=20)
 
     trainer.train()
 

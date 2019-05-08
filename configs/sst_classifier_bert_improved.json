@@ -1,4 +1,4 @@
-local embedding_dim = 768;
+local embedding_dim = 128;
 local hidden_dim = 128;
 
 {
