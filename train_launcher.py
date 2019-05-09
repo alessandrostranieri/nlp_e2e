@@ -61,10 +61,10 @@ word_embeddings: TextFieldEmbedder = BasicTextFieldEmbedder({"tokens": bert_embe
 # HW
 encoder = TransformerSeq2VecEncoder(EMBEDDING_DIM,
                                     HIDDEN_DIM,
-                                    projection_dim=128,
+                                    projection_dim=256,
                                     feedforward_hidden_dim=128,
                                     num_layers=2,
-                                    num_attention_heads=2)
+                                    num_attention_heads=4)
 
 model = LstmClassifier(word_embeddings, encoder, vocab)
 model.cuda()
@@ -82,7 +82,7 @@ trainer = Trainer(model=model,
                   validation_dataset=dev_dataset,
                   cuda_device=0,
                   patience=5,
-                  num_epochs=20)
+                  num_epochs=15)
 
 metrics = trainer.train()
 

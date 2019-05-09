@@ -1,0 +1,51 @@
+local embedding_dim = 256;
+local hidden_dim = 128;
+
+{
+  "dataset_reader": {
+    "type": "sst_tokens",
+    "token_indexers": {
+      "tokens": {
+        "type": "bert-pretrained",
+        "pretrained_model": "bert-base-uncased"
+      }
+    }
+  },
+  "train_data_path": "data/stanfordSentimentTreebank/trees/train.txt",
+  "validation_data_path": "data/stanfordSentimentTreebank/trees/dev.txt",
+
+  "model": {
+    "type": "lstm_classifier",
+
+    "word_embeddings": {
+      "tokens": {
+        "type": "bert-pretrained",
+        "pretrained_model": "bert-base-uncased"
+      },
+        "allow_unmatched_keys": true
+    },
+
+    "encoder": {
+      "type": "transformer_encoder",
+      "input_dim": embedding_dim,
+      "hidden_dim": hidden_dim,
+      "projection_dim" : 256,
+      "feedforward_hidden_dim" : 128,
+      "num_layers" : 2,
+      "num_attention_heads" : 4
+    }
+  },
+  "iterator": {
+    "type": "bucket",
+    "batch_size": 16,
+    "sorting_keys": [["tokens", "num_tokens"]]
+  },
+  "trainer": {
+    "optimizer": {
+      "type":"adam",
+      "lr": 0.001
+    },
+    "num_epochs": 20,
+    "patience": 10
+  }
+}
