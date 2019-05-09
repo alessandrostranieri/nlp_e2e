@@ -64,7 +64,7 @@ encoder = TransformerSeq2VecEncoder(EMBEDDING_DIM,
                                     projection_dim=128,
                                     feedforward_hidden_dim=128,
                                     num_layers=2,
-                                    num_attention_heads=4)
+                                    num_attention_heads=2)
 
 model = LstmClassifier(word_embeddings, encoder, vocab)
 model.cuda()
@@ -81,9 +81,10 @@ trainer = Trainer(model=model,
                   train_dataset=train_dataset,
                   validation_dataset=dev_dataset,
                   cuda_device=0,
-                  patience=10,
+                  patience=5,
                   num_epochs=20)
 
 metrics = trainer.train()
 
+print(metrics)
 
